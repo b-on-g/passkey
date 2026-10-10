@@ -1,0 +1,13 @@
+namespace $.$$ {
+
+	export class $bog_passkey_button_demo extends $.$bog_passkey_button_demo {
+
+		@ $mol_mem
+		info() {
+			const key = this.key()
+			return key ? `${ key.length } B: ${ $mol_base64_encode( key ) }` : ''
+		}
+
+	}
+
+}
