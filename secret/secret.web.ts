@@ -2,7 +2,10 @@ namespace $ {
 
 	export class $bog_passkey_secret extends $mol_object2 {
 
-		static async make() {
+		static async make(
+			user = crypto.getRandomValues( new Uint8Array( 16 ) ),
+			name = 'passkey',
+		) {
 
 			if( !this.$.$mol_dom_context.PublicKeyCredential ) {
 				$mol_fail( new Error( 'WebAuthn is unavailable: HTTPS or localhost is required' ) )
@@ -12,9 +15,9 @@ namespace $ {
 				publicKey: {
 					rp: { name: '$mol_passkey_secret' },
 					user: {
-						id: crypto.getRandomValues( new Uint8Array( 16 ) ),
-						name: 'passkey',
-						displayName: 'passkey',
+						id: user,
+						name,
+						displayName: name,
 					},
 					pubKeyCredParams: [
 						{ type: 'public-key', alg: -7 },
@@ -57,9 +60,12 @@ namespace $ {
 				$mol_fail( new Error( 'Passkey not found or returned no PRF secret' ) )
 			}
 
+			const user = ( cred.response as AuthenticatorAssertionResponse ).userHandle
+
 			return {
 				id: new Uint8Array( cred.rawId ),
 				key: new Uint8Array( first ),
+				user: user ? new Uint8Array( user ) : null,
 			}
 		}
 
